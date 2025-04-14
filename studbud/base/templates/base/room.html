@@ -55,21 +55,6 @@
                     </a>
                 </div>
 
-                <!-- <button class="action-button" data-id="120" data-delete-url="https://randomuser.me/api/3324923"
-                data-edit-url="profile.html">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                  <title>ellipsis-horizontal</title>
-                  <path
-                    d="M16 7.843c-2.156 0-3.908-1.753-3.908-3.908s1.753-3.908 3.908-3.908c2.156 0 3.908 1.753 3.908 3.908s-1.753 3.908-3.908 3.908zM16 1.98c-1.077 0-1.954 0.877-1.954 1.954s0.877 1.954 1.954 1.954c1.077 0 1.954-0.877 1.954-1.954s-0.877-1.954-1.954-1.954z">
-                  </path>
-                  <path
-                    d="M16 19.908c-2.156 0-3.908-1.753-3.908-3.908s1.753-3.908 3.908-3.908c2.156 0 3.908 1.753 3.908 3.908s-1.753 3.908-3.908 3.908zM16 14.046c-1.077 0-1.954 0.877-1.954 1.954s0.877 1.954 1.954 1.954c1.077 0 1.954-0.877 1.954-1.954s-0.877-1.954-1.954-1.954z">
-                  </path>
-                  <path
-                    d="M16 31.974c-2.156 0-3.908-1.753-3.908-3.908s1.753-3.908 3.908-3.908c2.156 0 3.908 1.753 3.908 3.908s-1.753 3.908-3.908 3.908zM16 26.111c-1.077 0-1.954 0.877-1.954 1.954s0.877 1.954 1.954 1.954c1.077 0 1.954-0.877 1.954-1.954s-0.877-1.954-1.954-1.954z">
-                  </path>
-                </svg>
-              </button> -->
             </div>
             <div class="room__box scroll">
                 <div class="room__header scroll">
@@ -81,32 +66,33 @@
                         <p>Hosted By</p>
                         <a href="{% url 'user_profile' room.host_id %}" class="room__author">
                             <div class="avatar avatar--small">
-                                <img src="https://randomuser.me/api/portraits/men/37.jpg"/>
+                                <img src="{{ room.host.avatar.url}}"/>
                             </div>
                             <span>@{{ room.host.username }}</span>
                         </a>
                     </div>
                     <div class="room__details">
-                        {{ room.body }}
+                        {{ room.description }}
                     </div>
                     <span class="room__topics">{{ room.topic }}</span>
                 </div>
+
                 <div class="room__conversation">
                     <div class="threads scroll">
-                        {% for message in room_messages %}
+                        {% for message in room_messages.reverse %}
                             <div class="thread">
                                 <div class="thread__top">
                                     <div class="thread__author">
                                         <a href="{% url 'user_profile' message.user_id %}" class="thread__authorInfo">
                                             <div class="avatar avatar--small">
-                                                <img src="https://randomuser.me/api/portraits/men/37.jpg"/>
+                                                <img src="{{ message.user.avatar.url }}"/>
                                             </div>
                                             <span>@{{ message.user.username }}</span>
                                         </a>
                                         <span class="thread__date">{{ message.created|timesince }} ago</span>
                                     </div>
                                     <div class="thread__delete">
-                                        {% if message.user == request.user %}
+                                        {% if message.user == request.user or room.host == request.user %}
                                             <a href="{% url 'deletemessage' message.id %}">
                                                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32"
                                                      height="32"
@@ -128,13 +114,18 @@
                     </div>
                 </div>
             </div>
+            <br>
+            <br>
             <div class="room__message">
-                <form method="post" action="">
-                    {% csrf_token %}<input type="text" name="body" placeholder="Write your message here..."/></form>
+                <form method="post" action="" class="room__form">
+                    {% csrf_token %}
+                    <input type="text" name="body" placeholder="Write your message here..." class="room__input"/>
+                    <button type="submit" class="room__send-btn">Send</button>
+                </form>
             </div>
+
         </div>
         <!-- Room End -->
-        l
         <!--   Start -->
         <div class="participants">
             <h3 class="participants__top">Participants <span>({{ participants.count }} Joined)</span></h3>
@@ -151,10 +142,18 @@
                         </p>
                     </a>
                 {% endfor %}
+
+            </div>
+            <div class="room__message">
+                <form method="post" action="{% url 'exit' room.id %}">
+                    {% csrf_token %}
+                    <input type="submit" value="EXIT">
+                </form>
             </div>
 
         </div>
         <!--  End -->
     </div>
+    <br>
+    <br>
 </main>
-<script src="script.js"></script>

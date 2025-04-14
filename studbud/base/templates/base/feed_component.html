@@ -1,10 +1,10 @@
-
-{% for room in rooms %}
+<div>
+{% for room in rooms|slice:":5" %}
     <div class="roomListRoom">
         <div class="roomListRoom__header">
             <a href="{% url 'user_profile' room.host.id %}" class="roomListRoom__author">
                 <div class="avatar avatar--small">
-                    <img src="https://randomuser.me/api/portraits/women/11.jpg"/>
+                    <img src="{{ room.host.avatar.url }}"/>
                 </div>
                 <span> @ {{room.host.username}}</span>
             </a>
@@ -40,3 +40,12 @@
     </div>
 
 {% endfor %}
+<a class="btn btn--link" href="{% url 'feed' %}">
+        More
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+            <title>chevron-down</title>
+            <path d="M16 21l-13-13h-3l16 16 16-16h-3l-13 13z"></path>
+        </svg>
+    </a>
+</div>
+<br>

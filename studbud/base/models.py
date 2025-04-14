@@ -1,9 +1,18 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.deletion import CASCADE
-
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+class User(AbstractUser):
+    name = models.CharField(max_length = 200, null = True)
+    email = models.EmailField(max_length = 200, unique=True, null = True)
+    bio = models.TextField(blank = True, null = True)
+    avatar= models.ImageField(null = True, default = 'avatar.jpg', upload_to = 'avatar')
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+
 
 class Topic(models.Model):
     name = models.CharField(max_length=100)
@@ -20,14 +29,28 @@ class Room(models.Model):
     participants = models.ManyToManyField(User, related_name='participants', blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    PRIVACY_CHOICES = [
+        ('public', 'Public'),
+        ('private', 'Private'),
+    ]
+    privacy = models.CharField(
+        max_length=7,
+        choices=PRIVACY_CHOICES,
+        default='public',
+    )
+    password = models.CharField(
+        max_length=128,  # you can increase this if needed
+        null=True,
+        blank=True,
+        help_text="Password for private rooms"
+    )
 
     class Meta:
-        ordering = ['-updated', '-created']
+        ordering = ['-updated']
 
 
     def __str__(self):
         return self.name
-
 
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -37,7 +60,7 @@ class Message(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-updated', '-created']
+        ordering = ['-created']
 
     def __str__(self):
         return self.body[0:50]

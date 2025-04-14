@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete page</title>
+</head>
+<body>
+{% extends 'main.html' %}
+{% block content %}
+
+    <form method="POST" action="">
+        {% csrf_token %}
+        <p>Are u sure to delete "{{ obj }}"?</p>
+        <a href="{{request.META.HTTP_REFERER}}">Goback</a>
+        <input type="submit" value="Confirm"/>
+
+    </form>
+
+{% endblock %}
+</body>
+</html>
